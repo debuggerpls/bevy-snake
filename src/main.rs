@@ -5,6 +5,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_startup_system(setup.system())
         .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
+        .add_system(snake_movement.system())
         .run();
 }
 
@@ -23,6 +24,12 @@ fn spawn_snake(mut commands: Commands, materials: Res<Materials>) {
             ..Default::default()
         })
         .insert(SnakeHead);
+}
+
+fn snake_movement(mut head_positions: Query<&mut Transform, With<SnakeHead>>) {
+    for mut transform in head_positions.iter_mut() {
+        transform.translation.y += 2.0;
+    }
 }
 
 struct SnakeHead;
