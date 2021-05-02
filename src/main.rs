@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::render::pass::ClearColor;
 
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
@@ -31,7 +32,13 @@ struct Materials {
 
 fn main() {
     App::build()
-        .add_plugins(DefaultPlugins)
+        .insert_resource(WindowDescriptor {
+            title: "Snake!".to_string(),
+            width: 500.0,
+            height: 500.0,
+            ..Default::default()
+        })
+        .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
         .add_startup_system(setup.system())
         .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
         .add_system(snake_movement.system())
@@ -41,6 +48,7 @@ fn main() {
                 .with_system(position_translation.system())
                 .with_system(size_scaling.system()),
         )
+        .add_plugins(DefaultPlugins)
         .run();
 }
 
@@ -68,16 +76,16 @@ fn snake_movement(
     mut head_positions: Query<&mut Position, With<SnakeHead>>
 ) {
     for mut position in head_positions.iter_mut() {
-        if keyboard_input.pressed(KeyCode::Left) {
+        if keyboard_input.just_pressed(KeyCode::Left) {
             position.x -= 1;
         }
-        if keyboard_input.pressed(KeyCode::Right) {
+        if keyboard_input.just_pressed(KeyCode::Right) {
             position.x += 1;
         }
-        if keyboard_input.pressed(KeyCode::Up) {
+        if keyboard_input.just_pressed(KeyCode::Up) {
             position.y += 1;
         }
-        if keyboard_input.pressed(KeyCode::Down) {
+        if keyboard_input.just_pressed(KeyCode::Down) {
             position.y -= 1;
         }
     }
